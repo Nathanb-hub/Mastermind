@@ -10,8 +10,7 @@ import random
 
 red = [1, 0, 0, 1]  
 green = [0, 1, 0, 1]  
-blue = [0, 0, 1, 1]  
-purple = [1, 0, 1, 1]  
+blue = [0, 0, 1, 1]
 yellow = [1,1,0,1]
 white = [1,1,1,1]
 black = [0,0,0,0]
@@ -26,35 +25,46 @@ class Main(App):
     def getInfos(self,instance):
         inputs = [firstDot.text,secondDot.text,thirdDot.text,lastDot.text]
         for i in range(len(inputs)):
+            if (inputs[i]=='Choose color'):
+                pass
             # section to give informations to player
-            if (inputs[i]  == self.winningCombination[i]): # right color at the right place
+            elif (inputs[i]  == self.winningCombination[i]): # right color at the right place
                 self.infoButtons[i].background_color=[0,1,0,1]
             elif(inputs[i]  in self.winningCombination and self.winningCombination[i] != inputs[i]):#right color at the wrong place
                 self.infoButtons[i].background_color= yellow 
             elif(inputs[i] not in self.winningCombination): #wrong color
                 self.infoButtons[i].background_color= [1,0,0,1]
-        self.adjustGridColors()
-            # if current_color=='Red':
-            #     current_color = [1,0,0,1]
-            # elif current_color=='Blue':
-            #     current_color = [0,0,1,1]
-            # elif current_color=='Green':
-            #     current_color = [0,1,0,1]
-            # elif current_color=='White':
-            #     current_color = [1,1,1,1]
-            # elif current_color=='Black':
-            #     current_color = [0,0,0,0]
-            # else :
-            #     pass
+
+        self.adjustGridColors() 
+     
+     
+     
     def adjustGridColors(self):
         inputs = [firstDot.text,secondDot.text,thirdDot.text,lastDot.text]
-        chunks = (inputs,4)
-        print(chunks)
-        
-    
-        for i in range(len(self.gridButtons)):
-            if (round ==1):
-                pass#self.gridButtons[i].background_color = 
+        chunks = [self.gridButtons[i:i+4] for i in range(0,len(self.gridButtons),4)]
+        for i in range(len(chunks)):
+            for n in range(len(chunks[i])):
+                if inputs[n]=='Red':
+                    chunks[i][n].background_color=[1,0,0,1]
+                    break
+                elif inputs[n]=='Blue':
+                    chunks[i][n].background_color= [0,0,1,1]
+                    break
+                elif inputs[n]=='Yellow':
+                    chunks[i][n].background_color= [1,1,0,1]
+                    break
+                elif inputs[n]=='Green':
+                    chunks[i][n].background_color= [0, 1, 0, 1]
+                    break
+                elif inputs[n]=='White':
+                    chunks[i][n].background_color= [1,1,1,1]
+                    break
+                elif inputs[n]=='Black':
+                    chunks[i][n].background_color= [0,0,0,0]
+                    break
+                else:
+                    pass
+         
             
         
         #section to adjust the color of the grid        
@@ -93,7 +103,7 @@ class Main(App):
 
         # grille de jeu 
         gameGrid = GridLayout(cols=4,rows=11,size_hint=(0.7,1))
-        for i in range(1,41):
+        for i in range(40):
             btn = Button(text='')
             self.gridButtons.append(btn)   
             gameGrid.add_widget(btn)
