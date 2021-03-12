@@ -6,11 +6,13 @@ from kivy.uix.label import Label
 from kivy.config import Config
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.popup import Popup
 import random
 
 red = [1, 0, 0, 1]  
 green = [0, 1, 0, 1]  
-blue = [0, 0, 1, 1]
+blue = [0, 0, 1, 1]  
+purple = [1, 0, 1, 1]  
 yellow = [1,1,0,1]
 white = [1,1,1,1]
 black = [0,0,0,0]
@@ -22,57 +24,79 @@ thirdDot = Spinner(text='Choose color', values=colors,size_hint=(1, 1))
 lastDot = Spinner(text='Choose color', values=colors,size_hint=(1, 1))
 
 class Main(App):
+    def giveColorCode(self,choice):
+        if choice =="Choose color":
+            choice = [0,0,0,0]
+        elif choice =="Red":
+            choice = [1,0,0,1]
+        elif choice=='Blue':
+            choice = [0,0,1,1]
+        elif choice=='Green':
+            choice = [0,1,0,1]
+        elif choice=='White':
+            choice = [1,1,1,1]
+        elif choice=='Black':
+            choice = [0,0,0,0]
+        elif choice=='Yellow':
+            choice = [1,1,0,1]
+        else :
+            choice = [0,0,0,0]
+        return choice
+    
+    def adjustGridColors(self):
+        for i in range(len(self.every_Choices)):
+            if (i<40):
+                color = self.giveColorCode(self.every_Choices[i])
+                self.gridButtons[i].background_color = color
+            else:
+                pass
+
     def getInfos(self,instance):
         inputs = [firstDot.text,secondDot.text,thirdDot.text,lastDot.text]
+        if len(self.every_Choices) == len(self.gridButtons):
+            self.game_Over()
+            
+
+
+        # on crée une liste de tous les choix qui on été fait pendant la partie
+        for choice in inputs:
+            self.every_Choices.append(choice)
         for i in range(len(inputs)):
-            if (inputs[i]=='Choose color'):
-                pass
             # section to give informations to player
+            if (inputs[i]=="Choose color"):
+                self.infoButtons[i].background_color=[0,0,0,0]
             elif (inputs[i]  == self.winningCombination[i]): # right color at the right place
                 self.infoButtons[i].background_color=[0,1,0,1]
             elif(inputs[i]  in self.winningCombination and self.winningCombination[i] != inputs[i]):#right color at the wrong place
                 self.infoButtons[i].background_color= yellow 
             elif(inputs[i] not in self.winningCombination): #wrong color
                 self.infoButtons[i].background_color= [1,0,0,1]
-
-        self.adjustGridColors() 
-     
-     
-     
-    def adjustGridColors(self):
-        inputs = [firstDot.text,secondDot.text,thirdDot.text,lastDot.text]
-        chunks = [self.gridButtons[i:i+4] for i in range(0,len(self.gridButtons),4)]
-        for i in range(len(chunks)):
-            for n in range(len(chunks[i])):
-                if inputs[n]=='Red':
-                    chunks[i][n].background_color=[1,0,0,1]
-                    break
-                elif inputs[n]=='Blue':
-                    chunks[i][n].background_color= [0,0,1,1]
-                    break
-                elif inputs[n]=='Yellow':
-                    chunks[i][n].background_color= [1,1,0,1]
-                    break
-                elif inputs[n]=='Green':
-                    chunks[i][n].background_color= [0, 1, 0, 1]
-                    break
-                elif inputs[n]=='White':
-                    chunks[i][n].background_color= [1,1,1,1]
-                    break
-                elif inputs[n]=='Black':
-                    chunks[i][n].background_color= [0,0,0,0]
-                    break
-                else:
-                    pass
-         
-            
         
-        #section to adjust the color of the grid        
+        # on regarde si tous est vert ce qui signifie fin de partie
+        n = 0
+        for i in range(len(self.infoButtons)):
+            if(self.infoButtons[i].background_color == [0,1,0,1]):
+                n+=1
+            if (n==4):
+                self.game_Over()
+
+        self.adjustGridColors()
+            # if current_color=='Red':
+            #     current_color = [1,0,0,1]
+
+    
+            
+
+    def game_Over(self):
+        popup = Popup(title='over', content=Label(text='Game Over'),size=(200, 200),auto_dismiss=False)
+        popup.open()
+
 
     def build(self):
         self.title= 'Mastermind'
         self.infoButtons = []
         self.gridButtons = []
+        self.every_Choices = []
         # les couleurs a obtenir pour gagner 
         self.winningCombination =[random.choice(colors),random.choice(colors),random.choice(colors),random.choice(colors)] 
         print(self.winningCombination)
@@ -103,7 +127,7 @@ class Main(App):
 
         # grille de jeu 
         gameGrid = GridLayout(cols=4,rows=11,size_hint=(0.7,1))
-        for i in range(40):
+        for i in range(0,40):
             btn = Button(text='')
             self.gridButtons.append(btn)   
             gameGrid.add_widget(btn)
