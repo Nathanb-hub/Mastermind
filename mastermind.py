@@ -76,7 +76,6 @@ class Main(App):
         # on cree la page de menu
         Menu = BoxLayout(orientation='horizontal')
         lmargin = Label(text='',size_hint=(0.2,1))
-        
         content = BoxLayout(orientation='vertical',size_hint=(0.8,1))
         play_Btn = Button(text='Jouer',id='play',size_hint=(1,0.4)) #on_press=self.screenChanger
         score_Btn = Button(text='Scores',id='score',size_hint=(1,0.4))  #on_press=self.screenChanger,
