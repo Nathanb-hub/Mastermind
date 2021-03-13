@@ -6,6 +6,7 @@ from kivy.uix.label import Label
 from kivy.config import Config
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.screenmanager import ScreenManager, Screen
 import random
 
 red = [1, 0, 0, 1]  
@@ -21,6 +22,9 @@ firstDot = Spinner(text='Choose color', values=colors,size_hint=(1, 1))
 secondDot = Spinner(text='Choose color', values=colors,size_hint=(1, 1))
 thirdDot = Spinner(text='Choose color', values=colors,size_hint=(1, 1))
 lastDot = Spinner(text='Choose color', values=colors,size_hint=(1, 1))
+
+sm = ScreenManager()
+
 
 class Main(App):
     def getInfos(self,instance):
@@ -49,23 +53,47 @@ class Main(App):
     def adjustGridColors(self):
         inputs = [firstDot.text,secondDot.text,thirdDot.text,lastDot.text]
         chunks = (inputs,4)
-        print(chunks)
-        
-    
-        for i in range(len(self.gridButtons)):
-            if (round ==1):
-                pass#self.gridButtons[i].background_color = 
+        # for i in range(len(self.gridButtons)):
+        #     if (round ==1):
+        #         pass#self.gridButtons[i].background_color = 
             
         
-        #section to adjust the color of the grid        
+        # #section to adjust the color of the grid        
+
+
 
     def build(self):
         self.title= 'Mastermind'
         self.infoButtons = []
         self.gridButtons = []
+        self.menuScreen = Screen(name="menu")
+        self.scoresScreen = Screen(name="scores")
+        self.gameScreen = Screen(name="game")
         # les couleurs a obtenir pour gagner 
         self.winningCombination =[random.choice(colors),random.choice(colors),random.choice(colors),random.choice(colors)] 
         print(self.winningCombination)
+
+        # on cree la page de menu
+        Menu = BoxLayout(orientation='horizontal')
+        lmargin = Label(text='',size_hint=(0.2,1))
+        
+        content = BoxLayout(orientation='vertical',size_hint=(0.8,1))
+        play_Btn = Button(text='Jouer',id='play',size_hint=(1,0.4)) #on_press=self.screenChanger
+        score_Btn = Button(text='Scores',id='score',size_hint=(1,0.4))  #on_press=self.screenChanger,
+        content.add_widget(play_Btn)
+        content.add_widget(score_Btn)
+        rmargin = Label(text='',size_hint=(0.2,1))
+
+        
+        
+        Menu.add_widget(lmargin)
+        Menu.add_widget(content)
+        Menu.add_widget(rmargin)
+
+        self.menuScreen.add_widget(Menu)
+        
+
+
 
 
         # pour contenir toutes les sections
@@ -79,9 +107,6 @@ class Main(App):
         header.add_widget(header_label)
         header.add_widget(b2)
         
-
-
-
 
         #Section pour le jeu : decomposée en 3 parties 
         gameSection = BoxLayout(orientation='horizontal',size_hint=(1,0.75))
@@ -134,7 +159,11 @@ class Main(App):
         gamePage.add_widget(header)
         gamePage.add_widget(gameSection)
         gamePage.add_widget(footer)
-        return gamePage
+        self.gameScreen.add_widget(gamePage)
+        sm.add_widget(self.menuScreen)
+        sm.add_widget(self.gameScreen)
+        #sm.add_widget(self.scoreScreen)
+        return sm
         # on ajoute toutes les sections dans la page de jeu avant de la return
 
 
